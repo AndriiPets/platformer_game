@@ -3,19 +3,26 @@ from settings import *
 from tile import Tile
 from player import Player
 from projectile import Projectile
+from particles import AnimationPlayer
 
 class Level:
     def __init__(self,screen) -> None:
         
         #level setup
         self.display_surf = screen
+        self.space_button = [False,False]
+       
 
         #sprite groups
         self.visible_sprites = CameraGroup(self.display_surf)
+        self.particle_sprites = CameraGroup(self.display_surf)
         self.active_sprites = pygame.sprite.Group()
         self.collision_sprites = pygame.sprite.Group()
 
+        self.animation_player = AnimationPlayer([self.particle_sprites])
+
         self.level_setup()
+        
 
     def level_setup(self):
         for row_inx, row in enumerate(LEVEL_MAP):
@@ -28,7 +35,9 @@ class Level:
                 if col == 'P':
                     self.player = Player((x,y),[self.visible_sprites,self.active_sprites],
                     self.collision_sprites,
-                    self.create_attack)
+                    self.create_attack,
+                    self.animation_player.run_dust_particles)
+                    
 
     def create_attack(self,weapon_type):
         if weapon_type == 'blaster':
@@ -42,10 +51,30 @@ class Level:
             Projectile(self.player.rect.centerx,self.player.rect.centery,
             [self.visible_sprites,self.active_sprites],self.collision_sprites,self.player.facing_right,20,self.player.rect.center,300)
 
+    def update_jump(self):
+        if self.space_button[0] and not self.space_button[1]:
+            self.player.space_button = [True,False]
+        if not self.space_button[0] and self.space_button[1]:
+            self.player.space_button = [False,True]
+
+    def manage_player_dust_particles(self):
+        if self.player.status == 'run' and self.player.on_floor:
+            offset = pygame.math.Vector2(6,10)
+            if self.player.on_right:
+                self.animation_player.run_dust_particles([self.visible_sprites],self.player.rect.bottomleft - offset,True)
+            else:
+                self.animation_player.run_dust_particles([self.visible_sprites],self.player.rect.bottomleft - offset,False)
+
+
 
     def run(self):
+        #self.manage_player_dust_particles()
         self.visible_sprites.custom_draw(self.player)
+        self.particle_sprites.custom_draw(self.player)
+        self.particle_sprites.update()
         self.active_sprites.update()
+        self.update_jump()
+        #self.visible_sprites.update()
 
 
 class CameraGroup(pygame.sprite.Group):

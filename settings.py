@@ -4,7 +4,7 @@ LEVEL_MAP = [
 '                            ',
 '       XXXX           XX    ',
 '   P                        ',
-'XXXXX         XX         XX ',
+'XXXXXXXXXXXXXXXX         XX ',
 ' XXXX       XX              ',
 ' XX    X  XXXX    XX  XX    ',
 '       X  XXXX    XX  XXX   ',
@@ -14,6 +14,7 @@ LEVEL_MAP = [
 TILE_SIZE = 64
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+TARGET_FPS = 60 
 
 # colors 
 BG_COLOR = '#060C17'
