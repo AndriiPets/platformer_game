@@ -20,6 +20,15 @@ class AnimationPlayer:
             animation_frames = self.reflect_images(self.frames['run'])
             
         ParticleAnimations(self.groups,pos,animation_frames)
+    
+    def jump_dust_particles(self,pos):
+        animation_frames = self.frames['jump']
+        ParticleAnimations(self.groups,pos,animation_frames)
+
+    def land_dust_particles(self,pos):
+        animation_frames = self.frames['land']
+        ParticleAnimations(self.groups,pos,animation_frames)
+        
 
     def reflect_images(self,frames):
         new_frames = []
