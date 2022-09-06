@@ -4,6 +4,7 @@ from tile import Tile
 from player import Player
 from projectile import Projectile
 from particles import AnimationPlayer
+from enemy import Enemy
 
 class Level:
     def __init__(self,screen) -> None:
@@ -18,6 +19,8 @@ class Level:
         self.particle_sprites = CameraGroup(self.display_surf)
         self.active_sprites = pygame.sprite.Group()
         self.collision_sprites = pygame.sprite.Group()
+        self.player_attack_sprites = pygame.sprite.Group()
+        self.attackable_sprites = pygame.sprite.Group()
 
         self.animation_player = AnimationPlayer([self.particle_sprites])
 
@@ -36,20 +39,26 @@ class Level:
                     self.player = Player((x,y),[self.visible_sprites,self.active_sprites],
                     self.collision_sprites,
                     self.create_attack,
-                    self.animation_player.run_dust_particles)
+                    self.animation_player)
+                if col == 'E':
+                    Enemy((x,y),[self.visible_sprites,self.active_sprites,self.attackable_sprites],'test')
                     
 
     def create_attack(self,weapon_type):
         if weapon_type == 'blaster':
             Projectile(self.player.rect.centerx,self.player.rect.centery,
-            [self.visible_sprites,self.active_sprites],self.collision_sprites,self.player.facing_right,0,self.player.rect.center,700)
+            [self.visible_sprites,self.active_sprites,self.player_attack_sprites],
+            self.collision_sprites,self.player.facing_right,0,self.player.rect.center,700)
         if weapon_type == 'shotgun':
             Projectile(self.player.rect.centerx,self.player.rect.centery,
-            [self.visible_sprites,self.active_sprites],self.collision_sprites,self.player.facing_right,0,self.player.rect.center,300),
+            [self.visible_sprites,self.active_sprites,self.player_attack_sprites],
+            self.collision_sprites,self.player.facing_right,0,self.player.rect.center,300),
             Projectile(self.player.rect.centerx,self.player.rect.centery,
-            [self.visible_sprites,self.active_sprites],self.collision_sprites,self.player.facing_right,-18,self.player.rect.center,300),
+            [self.visible_sprites,self.active_sprites],
+            self.collision_sprites,self.player.facing_right,-18,self.player.rect.center,300),
             Projectile(self.player.rect.centerx,self.player.rect.centery,
-            [self.visible_sprites,self.active_sprites],self.collision_sprites,self.player.facing_right,20,self.player.rect.center,300)
+            [self.visible_sprites,self.active_sprites,self.player_attack_sprites],
+            self.collision_sprites,self.player.facing_right,20,self.player.rect.center,300)
 
     def update_jump(self):
         if self.space_button[0] and not self.space_button[1]:

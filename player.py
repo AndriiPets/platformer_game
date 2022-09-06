@@ -24,6 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.on_ceiling = False
         self.on_left = False
         self.on_right = False
+        self.in_air = False
         self.current_x = 0
 
         #player movement
@@ -49,9 +50,10 @@ class Player(pygame.sprite.Sprite):
 
         #player attack 
         self.spawn_bullet = bullet_attack
-        self.weapon_list = ['blaster','shotgun']
+        self.weapon_list = list(WEAPON_DATA.keys())
         self.weapon_type = self.weapon_list[0]
         self.weapon_inx = 0
+        self.weapon_damage = WEAPON_DATA[self.weapon_type]['damage']
         self.can_switch_weapon = True
         self.weapon_switch_time = None
         self.weapon_switch_cooldown = 200
@@ -80,6 +82,9 @@ class Player(pygame.sprite.Sprite):
         
         if self.space_button[0] and not self.space_button[1] and self.on_floor:
             self.jump()
+            pos = self.rect.midbottom - pygame.math.Vector2(12,15)
+            self.dust_particles.jump_dust_particles(pos)
+            self.in_air = True
         if not self.space_button[0] and self.space_button[1]:
             self.jump_cut()
 
@@ -165,14 +170,16 @@ class Player(pygame.sprite.Sprite):
 
             if self.facing_right:
                 pos = self.rect.bottomleft - pygame.math.Vector2(6,10)
-                self.dust_particles(pos,True)
+                self.dust_particles.run_dust_particles(pos,True)
                 self.dust_time = pygame.time.get_ticks()
                 self.dust_ready = False
             else:
                 pos = self.rect.bottomright - pygame.math.Vector2(6,10)
-                self.dust_particles(pos,False)
+                self.dust_particles.run_dust_particles(pos,False)
                 self.dust_time = pygame.time.get_ticks()
                 self.dust_ready = False
+        
+    
         
 
 
